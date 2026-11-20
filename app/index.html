@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en" data-theme="ida" data-density="normal">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+<title>xdis</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="topbar">
+  <div class="bar-left">
+    <span class="brand"><svg class="ic ic-brand" aria-hidden="true"><use href="#ic-logo"></use></svg>xdis</span>
+    <nav class="menubar" id="menubar" role="menubar" aria-label="Main menu">
+      <div class="menu-wrap">
+        <button class="menu-trigger" data-menu="file" role="menuitem" aria-haspopup="true" aria-expanded="false">File</button>
+        <div class="menu-pop hidden" data-pop="file" role="menu">
+          <button class="mi" data-act="open" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-open"></use></svg>Open binary…</span><kbd>Ctrl+O</kbd></button>
+          <button class="mi" data-act="save" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-save"></use></svg>Save database (.xdb)</span><kbd>Ctrl+S</kbd></button>
+          <button class="mi" data-act="snaps" id="btn-snaps" role="menuitem" disabled><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-snap"></use></svg>Snapshots…</span><kbd></kbd></button>
+          <div class="mi-sep"></div>
+          <button class="mi" data-act="pdb" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-pdb"></use></svg>Load PDB / MAP symbols…</span><kbd></kbd></button>
+          <button class="mi" data-act="export_c" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-export"></use></svg>Export Pseudocode (.c)…</span><kbd></kbd></button>
+          <button class="mi" data-act="export_asm" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-export"></use></svg>Export Disassembly (.asm)…</span><kbd></kbd></button>
+          <button class="mi" data-act="export_bin" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-export"></use></svg>Export Patched Binary…</span><kbd></kbd></button>
+        </div>
+      </div>
+
+      <div class="menu-wrap">
+        <button class="menu-trigger" data-menu="edit" role="menuitem" aria-haspopup="true" aria-expanded="false">Edit</button>
+        <div class="menu-pop hidden" data-pop="edit" role="menu">
+          <button class="mi" data-act="undo" id="btn-undo" role="menuitem" disabled><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-undo"></use></svg>Undo</span><kbd>Ctrl+Z</kbd></button>
+          <button class="mi" data-act="redo" id="btn-redo" role="menuitem" disabled><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-redo"></use></svg>Redo</span><kbd>Ctrl+Y</kbd></button>
+          <div class="mi-sep"></div>
+          <button class="mi" data-act="goto" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-goto"></use></svg>Go to address…</span><kbd>G</kbd></button>
+          <button class="mi" data-act="find" id="btn-find" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-search"></use></svg>Search bytes / text…</span><kbd>Ctrl+F</kbd></button>
+          <button class="mi" data-act="xrefs" id="btn-xrefs" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-xrefs"></use></svg>Cross-references</span><kbd>X</kbd></button>
+        </div>
+      </div>
+
+      <div class="menu-wrap">
+        <button class="menu-trigger" data-menu="view" role="menuitem" aria-haspopup="true" aria-expanded="false">View</button>
+        <div class="menu-pop hidden" data-pop="view" role="menu">
+          <button class="mi" data-mode="split" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-split"></use></svg>IDA View + Pseudocode</span><kbd>F5</kbd></button>
+          <button class="mi" data-mode="graph" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-graph"></use></svg>Graph View</span><kbd>Space</kbd></button>
+          <button class="mi" data-mode="gdec" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-gdec"></use></svg>Graph + Pseudocode</span><kbd></kbd></button>
+          <button class="mi" data-mode="hex" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-hex"></use></svg>Hex View</span><kbd>H</kbd></button>
+          <button class="mi" data-mode="overview" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-overview"></use></svg>Binary Overview</span><kbd>O</kbd></button>
+          <button class="mi" data-mode="calls" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-calls"></use></svg>Call Graph &amp; Xrefs</span><kbd>C</kbd></button>
+          <div class="mi-sep"></div>
+          <button class="mi" data-act="inspector" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-inspector"></use></svg>Toggle Inspector</span><kbd>I</kbd></button>
+          <button class="mi" data-act="console" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-console"></use></svg>Toggle Output Console</span><kbd>`</kbd></button>
+          <button class="mi" data-act="explain" id="btn-explain" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-explain"></use></svg>Instruction Hints</span><kbd></kbd></button>
+          <button class="mi" data-act="navmode" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-nav"></use></svg>Nav Band: Sections / Entropy</span><kbd></kbd></button>
+          <div class="mi-sep"></div>
+          <button class="mi" data-act="prefs" id="btn-prefs" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-palette"></use></svg>Theme &amp; Preferences…</span><kbd></kbd></button>
+        </div>
+      </div>
+
+      <div class="menu-wrap">
+        <button class="menu-trigger" data-menu="analysis" role="menuitem" aria-haspopup="true" aria-expanded="false">Analysis</button>
+        <div class="menu-pop hidden" data-pop="analysis" role="menu">
+          <button class="mi" data-mode="ir" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-ir"></use></svg>SSA IR &amp; C++ Classes</span><kbd>U</kbd></button>
+          <button class="mi" data-mode="types" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-types"></use></svg>Local Types &amp; Struct Overlay</span><kbd>K</kbd></button>
+          <button class="mi" data-mode="deobf" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-deobf"></use></svg>Deobfuscation &amp; Protection Lab</span><kbd>D</kbd></button>
+          <button class="mi" data-mode="trace" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-trace"></use></svg>Emulator, Taint &amp; Path Solver</span><kbd>E</kbd></button>
+          <button class="mi" data-mode="diff" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-diff"></use></svg>Binary Diff &amp; Patch Triage</span><kbd>B</kbd></button>
+          <button class="mi" data-mode="audit" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-audit"></use></svg>Security Audit &amp; Forensics</span><kbd>A</kbd></button>
+        </div>
+      </div>
+
+      <div class="menu-wrap">
+        <button class="menu-trigger" data-menu="debugger" role="menuitem" aria-haspopup="true" aria-expanded="false">Debugger</button>
+        <div class="menu-pop hidden" data-pop="debugger" role="menu">
+          <button class="mi" data-mode="debug" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-debug"></use></svg>Debugger (Win32 / GDB / Minidump)</span><kbd>F9</kbd></button>
+          <button class="mi" data-act="trace_emu" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-trace"></use></svg>Static Micro-Emulator</span><kbd>E</kbd></button>
+        </div>
+      </div>
+
+      <div class="menu-wrap">
+        <button class="menu-trigger" data-menu="tools" role="menuitem" aria-haspopup="true" aria-expanded="false">Tools</button>
+        <div class="menu-pop hidden" data-pop="tools" role="menu">
+          <button class="mi" data-act="script" id="btn-script" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-script"></use></svg>Script Studio (Python / JS)</span><kbd>Ctrl+J</kbd></button>
+          <button class="mi" data-act="cmd" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-cmd"></use></svg>Command Palette…</span><kbd>Ctrl+K</kbd></button>
+          <div class="mi-sep"></div>
+          <button class="mi" data-act="guide" id="btn-guide" role="menuitem"><span class="mi-l"><svg class="ic" aria-hidden="true"><use href="#ic-guide"></use></svg>Keyboard Shortcuts &amp; Guide</span><kbd>F1</kbd></button>
+        </div>
+      </div>
+    </nav>
+    <span id="file-label" class="file-label">No binary loaded</span>
+  </div>
+
+  <div class="bar-right">
+    <button id="btn-cmd" class="tb-btn tb-cmd" title="Command palette (Ctrl+K)"><svg class="ic" aria-hidden="true"><use href="#ic-cmd"></use></svg>Commands <kbd>Ctrl+K</kbd></button>
+  </div>
+</header>
+
+<div id="iconbar" role="toolbar" aria-label="Quick actions">
+  <button id="btn-open" class="ib-btn" data-ib-act="open" title="Open binary (Ctrl+O)" aria-label="Open binary"><svg class="ic" aria-hidden="true"><use href="#ic-open"></use></svg></button>
+  <button class="ib-btn" data-ib-act="save" title="Save database (.xdb) (Ctrl+S)" aria-label="Save database"><svg class="ic" aria-hidden="true"><use href="#ic-save"></use></svg></button>
+  <span class="ib-sep"></span>
+  <button id="ib-undo" class="ib-btn" data-ib-act="undo" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg class="ic" aria-hidden="true"><use href="#ic-undo"></use></svg></button>
+  <button id="ib-redo" class="ib-btn" data-ib-act="redo" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg class="ic" aria-hidden="true"><use href="#ic-redo"></use></svg></button>
+  <button class="ib-btn" data-ib-act="back" title="Navigate back (Esc)" aria-label="Navigate back"><svg class="ic" aria-hidden="true"><use href="#ic-back"></use></svg></button>
+  <span class="ib-sep"></span>
+  <button class="ib-btn" data-ib-act="goto" title="Go to address or symbol (G)" aria-label="Go to address"><svg class="ic" aria-hidden="true"><use href="#ic-goto"></use></svg></button>
+  <button class="ib-btn" data-ib-act="find" title="Search bytes / text (Ctrl+F)" aria-label="Search"><svg class="ic" aria-hidden="true"><use href="#ic-search"></use></svg></button>
+  <button class="ib-btn" data-ib-act="xrefs" title="Cross-references (X)" aria-label="Cross-references"><svg class="ic" aria-hidden="true"><use href="#ic-xrefs"></use></svg></button>
+  <span class="ib-sep"></span>
+  <button class="ib-btn" data-ib-mode="split" title="IDA View + Pseudocode (F5)" aria-label="Split View"><svg class="ic" aria-hidden="true"><use href="#ic-split"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="graph" title="Control Flow Graph (Space)" aria-label="Graph View"><svg class="ic" aria-hidden="true"><use href="#ic-graph"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="calls" title="Call Graph &amp; Xrefs (C)" aria-label="Call Graph"><svg class="ic" aria-hidden="true"><use href="#ic-calls"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="hex" title="Hex &amp; Patch View (H)" aria-label="Hex View"><svg class="ic" aria-hidden="true"><use href="#ic-hex"></use></svg></button>
+  <span class="ib-sep"></span>
+  <button class="ib-btn" data-ib-mode="ir" title="SSA IR &amp; C++ Classes (U)" aria-label="SSA IR"><svg class="ic" aria-hidden="true"><use href="#ic-ir"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="types" title="Local Types &amp; Struct Overlay (K)" aria-label="Local Types"><svg class="ic" aria-hidden="true"><use href="#ic-types"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="deobf" title="Deobfuscation Lab (D)" aria-label="Deobf Lab"><svg class="ic" aria-hidden="true"><use href="#ic-deobf"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="trace" title="Emulator, Taint &amp; Path Solver (E)" aria-label="Trace and Taint"><svg class="ic" aria-hidden="true"><use href="#ic-trace"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="diff" title="Binary Diff &amp; Patch Triage (B)" aria-label="Binary Diff"><svg class="ic" aria-hidden="true"><use href="#ic-diff"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="audit" title="Security Audit, YARA, Carver, Hilbert &amp; Live (A)" aria-label="Security Audit"><svg class="ic" aria-hidden="true"><use href="#ic-audit"></use></svg></button>
+  <button class="ib-btn" data-ib-mode="debug" title="Debugger (Win32 / GDB / Minidump) (F9)" aria-label="Debugger"><svg class="ic" aria-hidden="true"><use href="#ic-debug"></use></svg></button>
+  <span class="ib-sep"></span>
+  <button class="ib-btn" data-ib-act="script" title="Script Studio (Ctrl+J)" aria-label="Script Studio"><svg class="ic" aria-hidden="true"><use href="#ic-script"></use></svg></button>
+  <button id="btn-ins" class="ib-btn" data-ib-act="inspector" title="Toggle Inspector Panel (I)" aria-label="Toggle Inspector"><svg class="ic" aria-hidden="true"><use href="#ic-inspector"></use></svg></button>
+  <button class="ib-btn" data-ib-act="prefs" title="Theme &amp; Preferences" aria-label="Theme and Preferences"><svg class="ic" aria-hidden="true"><use href="#ic-palette"></use></svg></button>
+</div>
+
+<div id="navstrip" title="Navigation band — click to jump, hover to preview, right-click toggles entropy"></div>
+
+<div id="tabstrip">
+  <div class="doc-tabs" id="mode-tabs" role="tablist">
+    <button data-mode="split" class="m-btn active" role="tab" title="Disassembly + Pseudocode (F5)"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-split"></use></svg>IDA View-A</button>
+    <button data-mode="graph" class="m-btn" role="tab" title="Control Flow Graph (Space)"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-graph"></use></svg>Graph</button>
+    <button data-mode="hex" class="m-btn" role="tab" title="Hex &amp; Patch View (H)"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-hex"></use></svg>Hex View</button>
+    <button data-mode="overview" class="m-btn" role="tab" title="Binary Overview &amp; Triage (O)"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-overview"></use></svg>Overview</button>
+    <div id="tool-tab-slot" class="tool-tab-slot hidden">
+      <button id="tool-tab-btn" class="m-btn active" role="tab"></button>
+      <button id="tool-tab-close" class="tool-tab-x" title="Close tool view" aria-label="Close tool view">×</button>
+    </div>
+  </div>
+  <div class="tabstrip-sep"></div>
+  <div id="tab-list" class="tab-list"></div>
+  <button id="btn-pin" class="tab-add" title="Pin current address as tab (Ctrl+T)" aria-label="Pin tab"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-pin"></use></svg></button>
+</div>
+
+<main id="workbench">
+  <aside id="sidebar">
+    <div class="side-tabs" id="side-tabs">
+      <button data-tab="funcs" class="s-tab active" title="Functions"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-func"></use></svg>Funcs</button>
+      <button data-tab="syms" class="s-tab" title="Names &amp; Imports"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-names"></use></svg>Names</button>
+      <button data-tab="strs" class="s-tab" title="Strings"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-strings"></use></svg>Strs</button>
+      <button data-tab="marks" class="s-tab" title="Bookmarks"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-marks"></use></svg>Marks</button>
+      <button data-tab="patches" class="s-tab" title="COW Patches"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-patch"></use></svg>Patch</button>
+    </div>
+    <div class="side-filter">
+      <input id="filter-input" type="text" placeholder="Filter… (/)" spellcheck="false" aria-label="Filter list">
+      <span id="list-count">0</span>
+    </div>
+    <div id="side-list" class="side-list"></div>
+  </aside>
+
+  <div class="splitter" id="split-side"></div>
+
+  <section id="workspace">
+    <div id="pane-left" class="pane">
+      <div class="pane-head">
+        <span class="pane-h-l"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-disasm"></use></svg><span id="left-title">IDA View-A</span></span>
+        <span id="left-meta" class="pane-meta"></span>
+      </div>
+      <div class="pane-stage">
+        <div id="left-body" class="pane-body"></div>
+        <div id="left-vscroll" class="vscroll hidden" title="Drag or click to jump across section">
+          <div class="vscroll-thumb"></div>
+          <div class="vscroll-tip hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="splitter hidden" id="split-mid"></div>
+
+    <div id="pane-right" class="pane hidden">
+      <div class="pane-head">
+        <span class="pane-h-l"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-code"></use></svg><span id="right-title">Pseudocode-A</span></span>
+        <div class="pane-acts">
+          <span id="right-meta" class="pane-meta"></span>
+          <button id="btn-retype" class="mini-btn hidden" title="Retype selected variable (Y)">Type</button>
+          <button id="btn-renvar" class="mini-btn hidden" title="Rename selected variable (N)">Rename</button>
+          <button id="btn-copy-c" class="mini-btn mini-ic" title="Copy Pseudocode C"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-copy"></use></svg>Copy</button>
+        </div>
+      </div>
+      <div class="pane-stage">
+        <div id="right-body" class="pane-body"></div>
+        <div id="right-vscroll" class="vscroll hidden" title="Drag or click to jump across section">
+          <div class="vscroll-thumb"></div>
+          <div class="vscroll-tip hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="splitter hidden" id="split-ins"></div>
+
+    <aside id="inspector" class="inspector hidden">
+      <div class="pane-head">
+        <span class="pane-h-l"><svg class="ic ic-sm" aria-hidden="true"><use href="#ic-inspector"></use></svg>Inspector</span>
+        <button id="btn-navmode" class="mini-btn" title="Toggle nav band: sections / entropy">Entropy</button>
+      </div>
+      <div id="ins-body" class="ins-body"></div>
+    </aside>
+  </section>
+</main>
+
+<footer id="bottom">
+  <div id="console-drawer" class="console hidden">
+    <div id="console-log" class="console-log"></div>
+    <div class="console-row">
+      <span class="console-pfx">&gt;</span>
+      <input id="console-in" type="text" placeholder="goto, rename, cmt, find, patch, entropy, theme, save…" spellcheck="false" aria-label="Command line">
+    </div>
+  </div>
+  <div id="statusbar">
+    <div class="st-left">
+      <button id="btn-console" class="st-btn st-ic"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-console"></use></svg>Output</button>
+      <span id="st-va" class="mono">0x0</span>
+      <span id="st-sec"></span>
+      <span id="st-fn" class="mono"></span>
+      <span id="st-var" class="mono"></span>
+    </div>
+    <div class="st-right">
+      <button id="st-collab" class="st-collab hidden" title="Active xdis Live Collab room (click to open)"></button>
+      <span id="st-stats"></span>
+      <button id="st-theme" class="st-btn st-theme-btn st-ic" title="Click to switch theme"><svg class="ic ic-xs" aria-hidden="true"><use href="#ic-palette"></use></svg><span id="st-theme-txt">IDA Dark</span></button>
+    </div>
+  </div>
+</footer>
+
+<div id="peek" class="peek hidden"></div>
+
+<div id="modal-bg" class="modal-bg hidden">
+  <div id="modal-box" class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span id="modal-title"></span>
+      <button id="modal-close" class="st-btn">Esc</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<div id="prefs-drawer" class="drawer hidden">
+  <div class="drawer-head">
+    <span>Theme &amp; Preferences</span>
+    <button id="prefs-close" class="st-btn">Close</button>
+  </div>
+  <div id="prefs-body"></div>
+</div>
+
+<script src="icons.js"></script>
+<script src="graph.js"></script>
+<script src="views.js"></script>
+<script src="triage.js"></script>
+<script src="pro.js"></script>
+<script src="studio.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

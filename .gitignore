@@ -1,0 +1,32 @@
+# Build artifacts & binaries
+build/
+xdis.exe
+*.exe
+*.dll
+*.obj
+*.lib
+*.exp
+*.pdb
+*.ilk
+
+# IDE & editor state
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Electron dependencies & local preferences
+app/node_modules/
+xdis-prefs.json
+
+# Python caches
+__pycache__/
+*.py[cod]
+.venv/
+
+# xdis runtime databases & snapshots
+*.xdb
+*.xdb.tmp
+*.xtypes
+*.xsig
+*.dmp
